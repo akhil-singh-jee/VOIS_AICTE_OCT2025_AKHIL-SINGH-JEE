@@ -1,0 +1,120 @@
+# -----------------------------
+📌 AIRBNB HOTEL BOOKING ANALYSIS PROJECT
+# -----------------------------
+
+
+1. Import Libraries
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+import warnings
+warnings.filterwarnings('ignore')
+
+2. Load Dataset
+file_path = "/content/Airbnb_Open_Data.csv"   # Update if in Google Drive
+df = pd.read_csv(file_path)
+
+3. Basic Info
+print("Shape:", df.shape)
+print("Columns:", df.columns)
+df.head()
+
+4. Data Cleaning
+# Convert price & service fee into numeric
+df['price'] = df['price'].replace('[\$,]', '', regex=True).astype(float)
+df['service fee'] = df['service fee'].replace('[\$,]', '', regex=True).astype(float)
+
+# Handle missing values
+df['reviews per month'] = df['reviews per month'].fillna(0)
+df['last review'] = pd.to_datetime(df['last review'], errors='coerce')
+
+# Drop unnecessary columns
+df.drop(['license'], axis=1, inplace=True)
+
+5. Summary Stats
+print(df.describe(include='all'))
+
+
+
+
+# -----------------------------
+ 📊 DATA VISUALIZATIONS
+# -----------------------------
+
+6. Distribution of Prices
+plt.figure(figsize=(10,6))
+sns.histplot(df['price'], bins=100, kde=True)
+plt.xlim(0,1000) # remove outliers for better view
+plt.title("Price Distribution")
+plt.show()
+
+7. Room Type Distribution
+plt.figure(figsize=(7,5))
+sns.countplot(x='room type', data=df, palette="Set2")
+plt.title("Room Type Distribution")
+plt.show()
+
+8. Average Price by Room Type
+plt.figure(figsize=(7,5))
+sns.barplot(x='room type', y='price', data=df, estimator=np.mean, palette="Set1")
+plt.title("Average Price by Room Type")
+plt.show()
+
+9. Neighbourhood Group Distribution
+plt.figure(figsize=(7,5))
+sns.countplot(x='neighbourhood group', data=df, palette="Set3")
+plt.title("Neighbourhood Group Distribution")
+plt.show()
+
+10. Top 10 Neighbourhoods by Listings
+plt.figure(figsize=(12,6))
+df['neighbourhood'].value_counts().head(10).plot(kind='bar', color="orange")
+plt.title("Top 10 Neighbourhoods by Listings")
+plt.show()
+
+11. Average Price by Neighbourhood Group
+plt.figure(figsize=(7,5))
+sns.barplot(x='neighbourhood group', y='price', data=df, estimator=np.mean, palette="coolwarm")
+plt.title("Average Price by Neighbourhood Group")
+plt.show()
+
+12. Availability vs Price
+plt.figure(figsize=(10,6))
+sns.scatterplot(x='availability 365', y='price', data=df, alpha=0.5)
+plt.ylim(0,1000) # limit outliers
+plt.title("Availability vs Price")
+plt.show()
+
+13. Reviews per Month Distribution
+plt.figure(figsize=(10,6))
+sns.histplot(df['reviews per month'], bins=50, kde=True, color="green")
+plt.title("Reviews per Month Distribution")
+plt.show()
+
+14. Yearly Review Trend
+plt.figure(figsize=(10,6))
+df['last review'].dt.year.value_counts().sort_index().plot(kind='bar', color="purple")
+plt.title("Yearly Review Counts")
+plt.xlabel("Year")
+plt.ylabel("Number of Reviews")
+plt.show()
+
+15. Correlation Heatmap
+plt.figure(figsize=(10,6))
+sns.heatmap(df.corr(), annot=True, cmap="coolwarm")
+plt.title("Correlation Heatmap")
+plt.show()
+
+
+
+
+# -----------------------------
+📌 INSIGHTS
+# -----------------------------
+print(" Insights from Analysis:")
+print("- Majority of listings are concentrated in certain neighbourhood groups.")
+print("- Entire home/apt and private rooms dominate the market.")
+print("- Prices are highly skewed, with some extreme outliers.")
+print("- Manhattan is generally more expensive than other areas.")
+print("- Reviews peaked in certain years, reflecting Airbnb popularity growth.")
